@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>PackingLight Packing List</title>
+	<script>
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const listId = urlParams.get('listId')
+	</script>
+  <script>
+    "use strict";
+
+    class PackingList {
+        name = "";
+        items = [];
+        itemCount = 0;
+        categories = [];
+        totalWeightGrams = 0;
+        totalWeightOunces = 0;
+    
+        constructor(name, items) {
+            this.name = name;
+            this.items = items.toSorted((a, b) => {
+                if(a.category == b.category) {
+                    return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+                } else {
+                    return a.category.localeCompare(b.category, { sensitivity: 'accent' });;
+                }
+            });
+    
+            const categoryMap = new Map();
+            this.items.forEach((currentItem) => {
+                this.itemCount += currentItem.quantity;
+                const itemCategoryName = currentItem.category;
+                const existingCategory = categoryMap.get(itemCategoryName);
+                if(existingCategory == null) {
+                    const newCategory = new Category(itemCategoryName, this.items.filter((element) => {
+                        return element.category == itemCategoryName;
+                    }));
+                    this.categories.push(newCategory);
+                    categoryMap.set(itemCategoryName, newCategory);
+                }
+            });
+    
+            this.categories.sort((a,b) => {
+                return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+            })
+    
+            this.totalWeightGrams = this.items.reduce((accumulator, currentItem) => {
+                return accumulator + currentItem.weightGrams;
+            }, 0);
+    
+            this.totalWeightOunces = this.items.reduce((accumulator, currentItem) => {
+                return accumulator + currentItem.weightOunces;
+            }, 0);
+        }
+    }
+    
+    class Category {
+        name = "";
+        items = [];
+        weightGrams = 0;
+        weightOunces = 0;
+    
+        constructor(name, items) {
+            this.name = name;
+            this.items = items.toSorted((a,b) => {
+                return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+            })
+    
+            this.weightGrams = this.items.reduce((accumulator, currentValue) => {
+                return accumulator + currentValue.weightGrams;
+            }, 0);
+            this.weightOunces = this.items.reduce((accumulator, currentValue) => {
+                return accumulator + currentValue.weightOunces;
+            }, 0);
+        }
+    }
+    
+    let isImperial = false;
+    
+    function toggleUnits() {
+        isImperial = !isImperial;
+        document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
+        updateUI(packingList, isImperial);
+    }
+    
+    var packingList;
+    
+    async function loadData(listId) {
+        // TODO: separate data fetching and ui update
+        var json = await fetchValueFromCloudKit(listId)
+        if(json) { 
+            console.log(json);
+            packingList = new PackingList(json.name, json.listItems);
+            isImperial = json.preferredUnits == 'oz'
+            updateUI(packingList, isImperial);
+        } else {
+            // TODO: Handle errors / null response
+            alert("Could not find list!");
+        }
+    }
+    
+    async function fetchValueFromCloudKit(key) {
+        CloudKit.configure({
+            containers: [{
+                containerIdentifier: 'iCloud.com.moapps.cktest.test-sandbox',
+                apiTokenAuth: {
+                    apiToken: '704d795cb0aaee29c5ed4464553a440edc18466c426d4d721f816aa43694f7d2',
+                    persist: true // Persist session across reloads
+                },
+                environment: 'development' // or 'production'
+            }]
+        });
+    
+        const database = CloudKit.getDefaultContainer().publicCloudDatabase;
+    
+        try {
+            const response = await database.fetchRecords(key);
+            const record = response.records[0];
+    
+            if (record && record.fields.value) {
+                const jsonObject = JSON.parse(record.fields.value.value);
+                return jsonObject;
+            } else {
+                console.warn('No value found for key:', key);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching record:', error);
+        }
+    }
+    
+    function updateUI(packingList, isImperial) {
+        if(isImperial == undefined) isImperial = false;
+        document.getElementById("listName").innerText = packingList.name;
+        document.getElementById("unitsButtonContainer").style.visibility = "visible";
+        document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
+        document.getElementById("listSummary").innerText = packingList.itemCount + " items : " + (isImperial ? formatOz(packingList.totalWeightOunces) : formatGrams(packingList.totalWeightGrams));
+        drawTable(packingList, isImperial);
+        drawGraph(packingList);
+    }
+    
+    function drawTable(packingList, isImperial) {
+        var tableHtml = "";
+        packingList.categories.forEach((category) => {
+            let items = category.items;
+            tableHtml += `<tr style="font-weight: bold;"><td><p class="categoryCell">${category.name}</p><td><p class="categoryCel weightCell">${isImperial ? formatOz(category.weightOunces) : formatGrams(category.weightGrams)}</p></td></tr>`;
+            tableHtml += items.reduce(
+                (accumulator, currentValue) => {
+                    var currentName = currentValue.name;
+                    if(currentValue.quantity > 1) {
+                        currentName += " x " + currentValue.quantity;
+                    }
+                    return accumulator + `<tr><td>${currentName}</td><td class="weightCell">${isImperial ? formatOz(currentValue.weightOunces) : formatGrams(currentValue.weightGrams)}</td></tr>`;
+                }
+                ,
+                ""
+            );
+        });
+        document.getElementById("listItems").innerHTML = tableHtml;
+    }
+    
+    function drawGraph(packingList) {
+        const categoryArray = Array.from(packingList.categories).sort((a,b) => { 
+            return b.weightGrams - a.weightGrams;
+        })
+        
+        var html = "";
+        const maxWeight = categoryArray[0].weightGrams;
+        
+        categoryArray.forEach((category) => {
+            const percentage = category.weightGrams / packingList.totalWeightGrams;
+            const widthPercentage = category.weightGrams / maxWeight;
+            const formattedPercentage = Number(percentage).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2});
+            const formattedWidthPercentage = Number(widthPercentage).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2});
+            html += `<p class="categorySummary">${category.name} (${formattedPercentage})</p>`;
+            html += "<div style=\"height: 10px; width: " + formattedWidthPercentage + ";background-color: #449C1A;\"></div>";
+        })
+    
+        document.getElementById("graph").innerHTML = html
+    }
+    
+    function formatOz(weight) {
+        let pounds = Math.floor(weight / 16);
+        let ounces = pounds == 0 ? weight : weight % 16;
+        const weightFormatter = new Intl.NumberFormat(navigator.language, {
+            style: 'decimal',
+            useGrouping: "min2",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+          });
+        const formattedWeight = weightFormatter.format(ounces);
+    
+        const poundText = pounds != 0 ? `${pounds} lbs ` : ""
+        return `${poundText}${formattedWeight} oz`;
+    }
+    
+    function formatGrams(weight) {
+        const weightFormatter = new Intl.NumberFormat(navigator.language, {
+            style: 'decimal',
+            useGrouping: "min2",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 1
+          });
+        const formattedWeight = weightFormatter.format(weight);
+        return `${formattedWeight} g`;
+    }
+	<!--link rel="stylesheet" href="style.css"/-->
+  <style>
+    /* BEGIN RESET CSS */
+
+    /* Box sizing rules */
+    *,
+    *::before,
+    *::after {
+    	box-sizing: border-box;
+    }
+    
+    /* Prevent font size inflation */
+    html {
+    	-moz-text-size-adjust: none;
+    	-webkit-text-size-adjust: none;
+    	text-size-adjust: none;
+    }
+    
+    /* Remove default margin in favour of better control in authored CSS */
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    figure,
+    blockquote,
+    dl,
+    dd {
+    	margin-block-end: 0;
+    }
+    
+    /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+    ul[role='list'],
+    ol[role='list'] {
+    	list-style: none;
+    }
+    
+    /* Set core body defaults */
+    body {
+    	min-height: 100vh;
+    	line-height: 1.5;
+    }
+    
+    /* Set shorter line heights on headings and interactive elements */
+    h1,
+    h2,
+    h3,
+    h4,
+    button,
+    input,
+    label {
+    	line-height: 1.1;
+    }
+    
+    /* Balance text wrapping on headings */
+    h1,
+    h2,
+    h3,
+    h4 {
+    	text-wrap: balance;
+    }
+    
+    /* A elements that don't have a class get default styles */
+    a:not([class]) {
+    	text-decoration-skip-ink: auto;
+    	color: currentColor;
+    }
+    
+    /* Make images easier to work with */
+    img,
+    picture {
+    	max-width: 100%;
+    	display: block;
+    }
+    
+    /* Inherit fonts for inputs and buttons */
+    input,
+    button,
+    textarea,
+    select {
+    	font-family: inherit;
+    	font-size: inherit;
+    }
+    
+    /* Make sure textareas without a rows attribute are not tiny */
+    textarea:not([rows]) {
+    	min-height: 10em;
+    }
+    
+    /* Anything that has been anchored to should have extra scroll margin */
+    :target {
+    	scroll-margin-block: 5ex;
+    }
+    
+    
+    /* END RESET CSS */
+    
+    /* TODO: Differentiate text types (title, category header, row text) */
+    html {
+    	font-size: 16px;
+    }
+    
+    body {
+    	margin: 0;
+    	font-family: Arial;
+    	background-color: rgb(68, 156, 26, 0.05);
+    	color: rgba(0, 0, 0, 0.94);
+    }
+    
+    .logoHeader {
+    	margin: 0 20px;
+    	display: flex;
+    }
+    
+    #headerLogo {
+    	width: 75px;
+    	height: 52px;
+    }
+    
+    h2#packlightHeader {
+    	color: #449C1A;
+    	margin: 0;
+    	margin-inline-start: 10px;
+    }
+    
+    .appStoreButton {
+    	cursor: pointer;
+    }
+    
+    #contentContainer {
+    	margin: 20px auto;
+    	max-width: 960px;
+    	padding: 20px 40px;
+    }
+    
+    #listHeader {
+    	width: 100%;
+    	margin: 30px 0 40px 0;
+    	display: flex;
+        justify-content: space-between;
+    }
+    
+    h1#listName {
+    	margin: 0 0 0.3rem 0;
+    	font-size: 1.8rem;
+    }
+    
+    #listSummary {
+    	opacity: 0.74;
+    }
+    
+    #unitsButtonContainer {
+    	font-size: 0.9em;
+    }
+    
+    #unitsButton {
+    	color: blue;
+    	border: none;
+    }
+    
+    #listItemTable {
+    	width: 100%;
+    }
+    
+    .listContainer {
+    	background-color: #FEFEFE;
+    	padding: 20px 40px 60px 40px;
+    	margin: 40px 0;
+    	border-radius: 0.5rem;
+    }
+    
+    #twoColumnContainer {
+    	display: flex;
+    	width: 100%
+    }
+    
+    #graph {
+    	/* Style */
+    }
+    
+    #graph .categorySummary {
+    	font-size: 0.9rem;
+    }
+    
+    .categoryCell {
+    	margin-top: 20px;
+    	margin-bottom: 5px;
+    }
+    
+    .weightCell {
+    	text-align: right;
+    }
+    
+    .clearfix::after {
+    	content: "";
+    	clear: both;
+    	display: table;
+    }
+  </style>
+</head>
+<body onload="loadData(listId)">
+	<div id="contentContainer">
+		 <div class="logoHeader" style="justify-content: space-between; align-items: center;">
+			<div id="logoAndName" style="display: flex; align-items: center;">
+				<img src="logo.svg" id="headerLogo"/>&nbsp;<h2 id="packlightHeader">PackLight</h2>
+			</div>			
+			<img class="appStoreButton" src="app_store_badge.svg" onclick="window.open('https://apps.apple.com/app/apple-store/id1054845207?pt=106642831&ct=weblist&mt=8', '_blank');"></img>
+		</div>
+		<div class="listContainer">
+			<div id="listHeader">
+				<div>
+					<h1 id="listName"></h1>
+					<span id="listSummary"></span>
+				</div>
+				<span id="unitsButtonContainer" style="visibility: hidden;">units: <a id="unitsButton" href="#" onClick="toggleUnits()">metric</a></span>
+			</div>			
+			<div id="twoColumnContainer">
+				<div style="flex: 60%;">
+					<table id="listItemTable">
+						<tbody id="listItems">
+							<tr><td>Loading...</td></tr>
+							<!-- TODO: Loading Image -->
+						</tbody>
+					</table>
+				</div>
+				<div style="flex: 10%;"></div>
+				<div id="graph" style="flex: 30%;">
+					<!-- TODO: Loading Image -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--script src="packlight.js"></script-->
+	<script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
+</body>
+</html>
