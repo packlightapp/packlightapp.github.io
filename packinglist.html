@@ -180,6 +180,7 @@
         })
     
         document.getElementById("graph").innerHTML = html
+        document.getElementById("mobile-graph").innerHTML = html
     }
     
     function formatOz(weight) {
@@ -339,9 +340,9 @@
     }
     
     #contentContainer {
-    	margin: 20px auto;
+    	margin: 2rem auto;
     	max-width: 960px;
-    	padding: 20px 40px;
+    	padding: 1rem 2rem;
     }
     
     #listHeader {
@@ -371,12 +372,13 @@
     
     #listItemTable {
     	width: 100%;
+        border-collapse: collapse;
     }
     
     .listContainer {
     	background-color: #FEFEFE;
-    	padding: 20px 40px 60px 40px;
-    	margin: 40px 0;
+    	padding: 1rem 2rem 3rem 2rem;
+    	margin: 2rem 0;
     	border-radius: 0.5rem;
     }
     
@@ -407,6 +409,49 @@
     	clear: both;
     	display: table;
     }
+
+    #list {
+        flex: 60%;
+    }
+
+    #gutter {
+        flex: 10%;
+    }
+
+    #graph {
+        flex: 30%;
+    }
+
+    #mobile-graph {
+        display: none;
+        visibility: hidden;
+    }
+
+    @media only screen and (max-width: 480px) {
+
+        html {
+            font-size: 14px;
+        }
+        
+        #list {
+            flex: 100%;
+        }
+
+        #gutter {
+            flex: 0%;
+        }
+        
+        #graph {
+            display: none;
+            visibility: hidden;
+            flex: 0%;
+        }
+
+        #mobile-graph {
+            display: block;
+            visibility: visible;
+        }
+    }
   </style>
 </head>
 <body onload="loadData(listId)">
@@ -425,8 +470,11 @@
 				</div>
 				<span id="unitsButtonContainer" style="visibility: hidden;">units: <a id="unitsButton" href="#" onClick="toggleUnits()">metric</a></span>
 			</div>			
+            <div id="mobile-graph">
+                <!-- TODO: Loading Image -->
+            </div>
 			<div id="twoColumnContainer">
-				<div style="flex: 60%;">
+				<div id="list">
 					<table id="listItemTable">
 						<tbody id="listItems">
 							<tr><td>Loading...</td></tr>
@@ -434,8 +482,8 @@
 						</tbody>
 					</table>
 				</div>
-				<div style="flex: 10%;"></div>
-				<div id="graph" style="flex: 30%;">
+                <div id="gutter"></div>
+				<div id="graph">
 					<!-- TODO: Loading Image -->
 				</div>
 			</div>
