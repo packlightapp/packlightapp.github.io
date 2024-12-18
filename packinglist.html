@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>PackingLight Packing List</title>
@@ -180,7 +180,6 @@
         })
     
         document.getElementById("graph").innerHTML = html
-        document.getElementById("mobile-graph").innerHTML = html
     }
     
     function formatOz(weight) {
@@ -325,18 +324,19 @@
     }
     
     #headerLogo {
-    	width: 75px;
-    	height: 52px;
+    	/* height: 52px; */
+    	height: 40px;
     }
     
     h2#packlightHeader {
     	color: #449C1A;
     	margin: 0;
-    	margin-inline-start: 10px;
+    	margin-inline-start: 1rem;
     }
     
     .appStoreButton {
     	cursor: pointer;
+        height: 40px;
     }
     
     #contentContainer {
@@ -387,10 +387,6 @@
     	width: 100%
     }
     
-    #graph {
-    	/* Style */
-    }
-    
     #graph .categorySummary {
     	font-size: 0.9rem;
     }
@@ -402,7 +398,7 @@
     
     .weightCell {
     	text-align: right;
-	white-space: nowrap;
+        white-space: nowrap;
         padding-left: 1rem;
     }
     
@@ -424,9 +420,38 @@
         flex: 30%;
     }
 
-    #mobile-graph {
-        display: none;
-        visibility: hidden;
+    .loadingSpinner {
+        border: 0.2rem solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 0.2rem solid #449C1A;
+        width: 1rem;
+        height: 1rem;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+        float: left;
+        margin-right: 1rem;
+        margin-top: 0.2rem;
+    }
+
+    #loadingText {
+        color: rgba(0, 0, 0, 0.84);
+    }
+
+    /* Safari */
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @media only screen and (max-width: 800px) {
+        html {
+            font-size: 15px;
+        }
     }
 
     @media only screen and (max-width: 480px) {
@@ -435,6 +460,19 @@
             font-size: 14px;
         }
         
+        #headerLogo {
+            /* height: 44px; */
+            height: 28px;
+        }
+
+        .appStoreButton {
+            height: 30px;
+        }
+
+        h2#packlightHeader {
+            margin-inline-start: 0;
+        }
+
         #list {
             flex: 100%;
         }
@@ -444,14 +482,12 @@
         }
         
         #graph {
-            display: none;
-            visibility: hidden;
-            flex: 0%;
+            flex: 100%;
         }
 
-        #mobile-graph {
-            display: block;
-            visibility: visible;
+        #twoColumnContainer {
+            flex-direction: column-reverse;
+            flex-wrap: wrap;
         }
     }
   </style>
@@ -460,9 +496,9 @@
 	<div id="contentContainer">
 		 <div class="logoHeader" style="justify-content: space-between; align-items: center;">
 			<div id="logoAndName" style="display: flex; align-items: center;">
-				<img src="logo.svg" id="headerLogo"/>&nbsp;<h2 id="packlightHeader">PackLight</h2>
+				<img src="logo.svg" alt="logo" id="headerLogo"/>&nbsp;<h2 id="packlightHeader">PackLight</h2>
 			</div>			
-			<img class="appStoreButton" src="app_store_badge.svg" onclick="window.open('https://apps.apple.com/app/apple-store/id1054845207?pt=106642831&ct=weblist&mt=8', '_blank');"></img>
+			<img class="appStoreButton" alt="download" src="app_store_badge.svg" onclick="window.open('https://apps.apple.com/app/apple-store/id1054845207?pt=106642831&ct=weblist&mt=8', '_blank');"></img>
 		</div>
 		<div class="listContainer">
 			<div id="listHeader">
@@ -470,28 +506,22 @@
 					<h1 id="listName"></h1>
 					<span id="listSummary"></span>
 				</div>
-				<span id="unitsButtonContainer" style="visibility: hidden;">units: <a id="unitsButton" href="#" onClick="toggleUnits()">metric</a></span>
-			</div>			
-            <div id="mobile-graph">
-                <!-- TODO: Loading Image -->
-            </div>
+				<span id="unitsButtonContainer" style="visibility: hidden;">units: <a id="unitsButton" href="" onClick="toggleUnits()">metric</a></span>
+			</div>
 			<div id="twoColumnContainer">
 				<div id="list">
 					<table id="listItemTable">
 						<tbody id="listItems">
-							<tr><td>Loading...</td></tr>
-							<!-- TODO: Loading Image -->
+							<tr><td><div class="loadingSpinner"></div><span id="loadingText">Loading...</span></td></tr>
 						</tbody>
 					</table>
 				</div>
                 <div id="gutter"></div>
 				<div id="graph">
-					<!-- TODO: Loading Image -->
 				</div>
 			</div>
 		</div>
 	</div>
-	<!--script src="packlight.js"></script-->
 	<script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
 </body>
 </html>
