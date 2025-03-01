@@ -101,13 +101,13 @@
             alert("Could not find list!");
         }
     }
-    
+
     async function fetchValueFromCloudKit(key) {
         CloudKit.configure({
             containers: [{
-                containerIdentifier: 'iCloud.com.moapps.cktest.test-sandbox',
+                containerIdentifier: 'iCloud.com.moapps.PackLight',
                 apiTokenAuth: {
-                    apiToken: '704d795cb0aaee29c5ed4464553a440edc18466c426d4d721f816aa43694f7d2',
+                    apiToken: '{{CK_API_TOKEN}}',
                     persist: true // Persist session across reloads
                 },
                 environment: 'development' // or 'production'
@@ -180,7 +180,6 @@
         })
     
         document.getElementById("graph").innerHTML = html
-        document.getElementById("mobile-graph").innerHTML = html
     }
     
     function formatOz(weight) {
@@ -374,6 +373,11 @@
     #listItemTable {
     	width: 100%;
         border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    #listItemtable td {
+        padding: 0;
     }
     
     .listContainer {
@@ -401,12 +405,6 @@
     	text-align: right;
         white-space: nowrap;
         padding-left: 1rem;
-    }
-    
-    .clearfix::after {
-    	content: "";
-    	clear: both;
-    	display: table;
     }
 
     #list {
