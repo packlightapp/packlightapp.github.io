@@ -97,8 +97,7 @@
             isImperial = json.preferredUnits == 'oz'
             updateUI(packingList, isImperial);
         } else {
-            // TODO: Handle errors / null response
-            alert("Could not find list!");
+            showNotFoundUI()
         }
     }
 
@@ -134,12 +133,18 @@
     
     function updateUI(packingList, isImperial) {
         if(isImperial == undefined) isImperial = false;
-        document.getElementById("listName").innerText = packingList.name;
+        document.getElementById("listName").innerText = (packingList.name && packingList.name != "") ? packingList.name : "Unnamed List";
         document.getElementById("unitsButtonContainer").style.visibility = "visible";
         document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
         document.getElementById("listSummary").innerText = packingList.itemCount + " items : " + (isImperial ? formatOz(packingList.totalWeightOunces) : formatGrams(packingList.totalWeightGrams));
         drawTable(packingList, isImperial);
         drawGraph(packingList);
+    }
+
+    function showNotFoundUI() {
+        document.getElementById("listName").innerText = "List Not Found!"
+        document.getElementById("unitsButtonContainer").style.visibility = "hidden";
+        document.getElementById("list").innerText = "If the url is correct, the owner has likely taken the list offline."
     }
     
     function drawTable(packingList, isImperial) {
