@@ -2,214 +2,236 @@
 <html lang="en">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="PackLight Packing List">
+    <meta property="og:description" content="Your friend shared a packing list.">
+    <meta property="og:image" content="https://www.packlightapp.com/logo.svg">
+    <meta property="og:url" content="https://www.packlightapp.com/packinglist.html">
+    <meta property="og:type" content="website">
 	<title>PackingLight Packing List</title>
 	<script>
 		const queryString = window.location.search;
 		const urlParams = new URLSearchParams(queryString);
 		const listId = urlParams.get('listId')
 	</script>
-  <script>
-    "use strict";
+    <script>
+        "use strict";
 
-    class PackingList {
-        name = "";
-        items = [];
-        itemCount = 0;
-        categories = [];
-        totalWeightGrams = 0;
-        totalWeightOunces = 0;
-    
-        constructor(name, items) {
-            this.name = name;
-            this.items = items.toSorted((a, b) => {
-                if(a.category == b.category) {
-                    return a.name.localeCompare(b.name, { sensitivity: 'accent' });
-                } else {
-                    return a.category.localeCompare(b.category, { sensitivity: 'accent' });;
-                }
-            });
-    
-            const categoryMap = new Map();
-            this.items.forEach((currentItem) => {
-                this.itemCount += currentItem.quantity;
-                const itemCategoryName = currentItem.category;
-                const existingCategory = categoryMap.get(itemCategoryName);
-                if(existingCategory == null) {
-                    const newCategory = new Category(itemCategoryName, this.items.filter((element) => {
-                        return element.category == itemCategoryName;
-                    }));
-                    this.categories.push(newCategory);
-                    categoryMap.set(itemCategoryName, newCategory);
-                }
-            });
-    
-            this.categories.sort((a,b) => {
-                return a.name.localeCompare(b.name, { sensitivity: 'accent' });
-            })
-    
-            this.totalWeightGrams = this.items.reduce((accumulator, currentItem) => {
-                return accumulator + currentItem.weightGrams;
-            }, 0);
-    
-            this.totalWeightOunces = this.items.reduce((accumulator, currentItem) => {
-                return accumulator + currentItem.weightOunces;
-            }, 0);
-        }
-    }
-    
-    class Category {
-        name = "";
-        items = [];
-        weightGrams = 0;
-        weightOunces = 0;
-    
-        constructor(name, items) {
-            this.name = name;
-            this.items = items.toSorted((a,b) => {
-                return a.name.localeCompare(b.name, { sensitivity: 'accent' });
-            })
-    
-            this.weightGrams = this.items.reduce((accumulator, currentValue) => {
-                return accumulator + currentValue.weightGrams;
-            }, 0);
-            this.weightOunces = this.items.reduce((accumulator, currentValue) => {
-                return accumulator + currentValue.weightOunces;
-            }, 0);
-        }
-    }
-    
-    let isImperial = false;
-    
-    function toggleUnits() {
-        isImperial = !isImperial;
-        document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
-        updateUI(packingList, isImperial);
-    }
-    
-    var packingList;
-    
-    async function loadData(listId) {
-        // TODO: separate data fetching and ui update
-        var json = await fetchValueFromCloudKit(listId)
-        if(json) { 
-            console.log(json);
-            packingList = new PackingList(json.name, json.listItems);
-            isImperial = json.preferredUnits == 'oz'
-            updateUI(packingList, isImperial);
-        } else {
-            // TODO: Handle errors / null response
-            alert("Could not find list!");
-        }
-    }
-
-    async function fetchValueFromCloudKit(key) {
-        CloudKit.configure({
-            containers: [{
-                containerIdentifier: 'iCloud.com.moapps.PackLight',
-                apiTokenAuth: {
-                    apiToken: '{{CK_API_KEY}}',
-                    persist: true // Persist session across reloads
-                },
-                environment: 'development' // or 'production'
-            }]
-        });
-    
-        const database = CloudKit.getDefaultContainer().publicCloudDatabase;
-    
-        try {
-            const response = await database.fetchRecords(key);
-            const record = response.records[0];
-    
-            if (record && record.fields.value) {
-                const jsonObject = JSON.parse(record.fields.value.value);
-                return jsonObject;
-            } else {
-                console.warn('No value found for key:', key);
-                return null;
-            }
-        } catch (error) {
-            console.error('Error fetching record:', error);
-        }
-    }
-    
-    function updateUI(packingList, isImperial) {
-        if(isImperial == undefined) isImperial = false;
-        document.getElementById("listName").innerText = packingList.name;
-        document.getElementById("unitsButtonContainer").style.visibility = "visible";
-        document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
-        document.getElementById("listSummary").innerText = packingList.itemCount + " items : " + (isImperial ? formatOz(packingList.totalWeightOunces) : formatGrams(packingList.totalWeightGrams));
-        drawTable(packingList, isImperial);
-        drawGraph(packingList);
-    }
-    
-    function drawTable(packingList, isImperial) {
-        var tableHtml = "";
-        packingList.categories.forEach((category) => {
-            let items = category.items;
-            tableHtml += `<tr style="font-weight: bold;"><td><p class="categoryCell">${category.name}</p><td><p class="categoryCel weightCell">${isImperial ? formatOz(category.weightOunces) : formatGrams(category.weightGrams)}</p></td></tr>`;
-            tableHtml += items.reduce(
-                (accumulator, currentValue) => {
-                    var currentName = currentValue.name;
-                    if(currentValue.quantity > 1) {
-                        currentName += " x " + currentValue.quantity;
+        class PackingList {
+            name = "";
+            items = [];
+            itemCount = 0;
+            categories = [];
+            totalWeightGrams = 0;
+            totalWeightOunces = 0;
+        
+            constructor(name, items) {
+                this.name = name;
+                this.items = items.toSorted((a, b) => {
+                    if(a.category == b.category) {
+                        return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+                    } else {
+                        return a.category.localeCompare(b.category, { sensitivity: 'accent' });
                     }
-                    return accumulator + `<tr><td>${currentName}</td><td class="weightCell">${isImperial ? formatOz(currentValue.weightOunces) : formatGrams(currentValue.weightGrams)}</td></tr>`;
+                });
+        
+                const categoryMap = new Map();
+                this.items.forEach((currentItem) => {
+                    this.itemCount += currentItem.quantity;
+                    const itemCategoryName = currentItem.category;
+                    const existingCategory = categoryMap.get(itemCategoryName);
+                    if(existingCategory == null) {
+                        const newCategory = new Category(itemCategoryName, this.items.filter((element) => {
+                            return element.category == itemCategoryName;
+                        }));
+                        this.categories.push(newCategory);
+                        categoryMap.set(itemCategoryName, newCategory);
+                    }
+                });
+        
+                this.categories.sort((a,b) => {
+                    return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+                })
+        
+                this.totalWeightGrams = this.items.reduce((accumulator, currentItem) => {
+                    return accumulator + currentItem.weightGrams;
+                }, 0);
+        
+                this.totalWeightOunces = this.items.reduce((accumulator, currentItem) => {
+                    return accumulator + currentItem.weightOunces;
+                }, 0);
+            }
+        }
+        
+        class Category {
+            name = "";
+            items = [];
+            weightGrams = 0;
+            weightOunces = 0;
+        
+            constructor(name, items) {
+                this.name = name;
+                this.items = items.toSorted((a,b) => {
+                    return a.name.localeCompare(b.name, { sensitivity: 'accent' });
+                })
+        
+                this.weightGrams = this.items.reduce((accumulator, currentValue) => {
+                    return accumulator + currentValue.weightGrams;
+                }, 0);
+                this.weightOunces = this.items.reduce((accumulator, currentValue) => {
+                    return accumulator + currentValue.weightOunces;
+                }, 0);
+            }
+        }
+        
+        let isImperial = false;
+        
+        function toggleUnits() {
+            isImperial = !isImperial;
+            document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
+            updateUI(packingList, isImperial);
+        }
+        
+        let packingList;
+        
+        async function loadData(listId) {
+            // TODO: separate data fetching and ui update
+            var json = await fetchValueFromCloudKit(listId)
+            if(json) { 
+                console.log(json);
+                packingList = new PackingList(json.name, json.listItems);
+                isImperial = json.preferredUnits == 'oz'
+                updateUI(packingList, isImperial);
+            } else {
+                showNotFoundUI()
+            }
+        }
+
+        async function fetchValueFromCloudKit(key) {
+            CloudKit.configure({
+                containers: [{
+                    containerIdentifier: 'iCloud.com.moapps.PackLight',
+                    apiTokenAuth: {
+                        apiToken: '61ae09ee1a16555deadea5bb183e5803e6d015c4964e870a92fbefd96b6d6a42', //cf_token
+                        persist: true 
+                    },
+                    environment: 'development' //cf_token
+                }]
+            });
+        
+            const database = CloudKit.getDefaultContainer().publicCloudDatabase;
+        
+            try {
+                const response = await database.fetchRecords(key);
+                const record = response.records[0];
+        
+                if (record && record.fields.value) {
+                    const jsonObject = JSON.parse(record.fields.value.value);
+                    return jsonObject;
+                } else {
+                    console.warn('No value found for key:', key);
+                    return null;
                 }
-                ,
-                ""
-            );
-        });
-        document.getElementById("listItems").innerHTML = tableHtml;
-    }
-    
-    function drawGraph(packingList) {
-        const categoryArray = Array.from(packingList.categories).sort((a,b) => { 
-            return b.weightGrams - a.weightGrams;
-        })
+            } catch (error) {
+                console.error('Error fetching record:', error);
+            }
+        }
         
-        var html = "";
-        const maxWeight = categoryArray[0].weightGrams;
+        function updateUI(packingList, isImperial) {
+            if(isImperial == undefined) isImperial = false;
+            document.getElementById("listName").innerText = (packingList.name && packingList.name != "") ? packingList.name : "Unnamed List";
+            document.getElementById("unitsButtonContainer").style.visibility = "visible";
+            document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
+            document.getElementById("listSummary").innerText = packingList.itemCount + " items : " + (isImperial ? formatOz(packingList.totalWeightOunces) : formatGrams(packingList.totalWeightGrams));
+            drawTable(packingList, isImperial);
+            if(packingList.totalWeightGrams > 0) {
+                drawGraph(packingList);
+                showGraph()
+            } else {
+                hideGraph()
+            }
+        }
+        function showGraph() {
+            document.getElementById("graph").hidden = true;
+        }
+
+        function showGraph() {
+            document.getElementById("graph").hidden = false;
+        }
+
+        function showNotFoundUI() {
+            document.getElementById("listName").innerText = "List Not Found!"
+            document.getElementById("unitsButtonContainer").style.visibility = "hidden";
+            document.getElementById("list").innerText = "If the url is correct, the owner has likely taken the list offline."
+        }
         
-        categoryArray.forEach((category) => {
-            const percentage = category.weightGrams / packingList.totalWeightGrams;
-            const widthPercentage = category.weightGrams / maxWeight;
-            const formattedPercentage = Number(percentage).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2});
-            const formattedWidthPercentage = Number(widthPercentage).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2});
-            html += `<p class="categorySummary">${category.name} (${formattedPercentage})</p>`;
-            html += "<div style=\"height: 10px; width: " + formattedWidthPercentage + ";background-color: #449C1A;\"></div>";
-        })
-    
-        document.getElementById("graph").innerHTML = html
+        function drawTable(packingList, isImperial) {
+            var tableHtml = "";
+            packingList.categories.forEach((category) => {
+                let items = category.items;
+                tableHtml += `<tr style="font-weight: bold;"><td><p class="categoryCell">${category.name}</p><td><p class="categoryCel weightCell">${isImperial ? formatOz(category.weightOunces) : formatGrams(category.weightGrams)}</p></td></tr>`;
+                tableHtml += items.reduce(
+                    (accumulator, currentValue) => {
+                        var currentName = currentValue.name;
+                        if(currentValue.quantity > 1) {
+                            currentName += " x " + currentValue.quantity;
+                        }
+                        return accumulator + `<tr><td>${currentName}</td><td class="weightCell">${isImperial ? formatOz(currentValue.weightOunces) : formatGrams(currentValue.weightGrams)}</td></tr>`;
+                    }
+                    ,
+                    ""
+                );
+            });
+            document.getElementById("listItems").innerHTML = tableHtml;
+        }
+        
+        function drawGraph(packingList) {
+            const categoryArray = Array.from(packingList.categories).sort((a,b) => { 
+                return b.weightGrams - a.weightGrams;
+            })
+            
+            var html = "";
+            const maxWeight = categoryArray[0].weightGrams;
+            
+            categoryArray.forEach((category) => {
+                const percentage = category.weightGrams / packingList.totalWeightGrams;
+                const widthPercentage = category.weightGrams / maxWeight;
+                const formattedPercentage = Number(percentage).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2});
+                const formattedWidthPercentage = Number(widthPercentage).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:2});
+                html += `<p class="categorySummary">${category.name} (${formattedPercentage})</p>`;
+                html += "<div style=\"height: 10px; width: " + formattedWidthPercentage + ";background-color: #449C1A;\"></div>";
+            })
+        
+            document.getElementById("graph").innerHTML = html
+        }
+        
+        function formatOz(weight) {
+            let pounds = Math.floor(weight / 16);
+            let ounces = pounds == 0 ? weight : weight % 16;
+            const weightFormatter = new Intl.NumberFormat(navigator.language, {
+                style: 'decimal',
+                useGrouping: "min2",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+            const formattedWeight = weightFormatter.format(ounces);
+        
+            const poundText = pounds != 0 ? `${pounds} lbs ` : ""
+            return `${poundText}${formattedWeight} oz`;
+        }
+        
+        function formatGrams(weight) {
+            const weightFormatter = new Intl.NumberFormat(navigator.language, {
+                style: 'decimal',
+                useGrouping: "min2",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1
+            });
+            const formattedWeight = weightFormatter.format(weight);
+            return `${formattedWeight} g`;
     }
+    </script>
     
-    function formatOz(weight) {
-        let pounds = Math.floor(weight / 16);
-        let ounces = pounds == 0 ? weight : weight % 16;
-        const weightFormatter = new Intl.NumberFormat(navigator.language, {
-            style: 'decimal',
-            useGrouping: "min2",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-          });
-        const formattedWeight = weightFormatter.format(ounces);
-    
-        const poundText = pounds != 0 ? `${pounds} lbs ` : ""
-        return `${poundText}${formattedWeight} oz`;
-    }
-    
-    function formatGrams(weight) {
-        const weightFormatter = new Intl.NumberFormat(navigator.language, {
-            style: 'decimal',
-            useGrouping: "min2",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 1
-          });
-        const formattedWeight = weightFormatter.format(weight);
-        return `${formattedWeight} g`;
-    }
-  </script>
-	<!--link rel="stylesheet" href="style.css"/-->
-  <style>
+    <style>
     /* BEGIN RESET CSS */
 
     /* Box sizing rules */
@@ -324,7 +346,6 @@
     }
     
     #headerLogo {
-    	/* height: 52px; */
     	height: 40px;
     }
     
@@ -340,7 +361,7 @@
     }
     
     #contentContainer {
-    	margin: 2rem auto;
+    	margin: 0 auto;
     	max-width: 960px;
     	padding: 1rem 2rem;
     }
@@ -436,8 +457,8 @@
         color: rgba(0, 0, 0, 0.84);
     }
 
-    /* Safari */
-    @-webkit-keyframes spin {
+    /* Spinner */
+    @-webkit-keyframes spin { /* Safari */
         0% { -webkit-transform: rotate(0deg); }
         100% { -webkit-transform: rotate(360deg); }
     }
@@ -447,20 +468,20 @@
         100% { transform: rotate(360deg); }
     }
 
+    /* tablet */
     @media only screen and (max-width: 800px) {
         html {
             font-size: 15px;
         }
     }
 
+    /* phone */
     @media only screen and (max-width: 480px) {
-
         html {
             font-size: 14px;
         }
         
         #headerLogo {
-            /* height: 44px; */
             height: 28px;
         }
 
