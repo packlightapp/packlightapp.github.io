@@ -7,7 +7,7 @@
     <meta property="og:image" content="https://www.packlightapp.com/logo.svg">
     <meta property="og:url" content="https://www.packlightapp.com/packinglist.html">
     <meta property="og:type" content="website">
-	<title>PackingLight Packing List</title>
+	<title>PackLight Packing List</title>
 	<script>
 		const queryString = window.location.search;
 		const urlParams = new URLSearchParams(queryString);
@@ -87,17 +87,15 @@
         
         function toggleUnits() {
             isImperial = !isImperial;
-            document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
+            updateUnitsLabel(isImperial)
             updateUI(packingList, isImperial);
         }
         
         let packingList;
         
         async function loadData(listId) {
-            // TODO: separate data fetching and ui update
             var json = await fetchValueFromCloudKit(listId)
             if(json) { 
-                console.log(json);
                 packingList = new PackingList(json.name, json.listItems);
                 isImperial = json.preferredUnits == 'oz'
                 updateUI(packingList, isImperial);
@@ -140,22 +138,37 @@
             if(isImperial == undefined) isImperial = false;
             document.getElementById("listName").innerText = (packingList.name && packingList.name != "") ? packingList.name : "Unnamed List";
             document.getElementById("unitsButtonContainer").style.visibility = "visible";
-            document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
+            updateUnitsLabel(isImperial)
             document.getElementById("listSummary").innerText = packingList.itemCount + " items : " + (isImperial ? formatOz(packingList.totalWeightOunces) : formatGrams(packingList.totalWeightGrams));
             drawTable(packingList, isImperial);
-            if(packingList.totalWeightGrams > 0) {
-                drawGraph(packingList);
-                showGraph()
-            } else {
+            drawGraph(packingList);
+            if(packingList.totalWeightGrams == 0) {
                 hideGraph()
             }
         }
-        function showGraph() {
-            document.getElementById("graph").hidden = true;
+
+        function updateUnitsLabel(isImperial) {
+            document.getElementById("unitsButton").innerText = isImperial ? "imperial" : "metric";
+            document.getElementById("mobileUnitsButton").innerText = isImperial ? "imperial" : "metric";
+        }
+
+        function toggleGraph() {
+            const graphHidden = getComputedStyle(document.getElementById("graph")).display == 'none';
+            if(graphHidden) {
+                showGraph();
+            } else {
+                hideGraph();
+            }
         }
 
         function showGraph() {
-            document.getElementById("graph").hidden = false;
+            document.getElementById("graphToggleButton").innerText = "Hide Graph";
+            document.getElementById("graph").style.display = 'block';
+        }
+
+        function hideGraph() {
+            document.getElementById("graphToggleButton").innerText = "Show Graph";
+            document.getElementById("graph").style.display = 'none';
         }
 
         function showNotFoundUI() {
@@ -382,13 +395,17 @@
     	opacity: 0.74;
     }
     
+    #mobileControls {
+        display: none;
+    }
+
     #unitsButtonContainer {
     	font-size: 0.9em;
     }
     
-    #unitsButton {
+    a:not([class]) {
     	color: blue;
-    	border: none;
+        cursor: pointer;
     }
     
     #listItemTable {
@@ -413,6 +430,14 @@
     	width: 100%
     }
     
+    #graphToggleButton {
+        display: none;
+    }
+
+    #graph {
+        flex: 30%;
+    }
+
     #graph .categorySummary {
     	font-size: 0.9rem;
     }
@@ -434,11 +459,7 @@
 
     #gutter {
         flex: 10%;
-    }
-
-    #graph {
-        flex: 30%;
-    }
+    }    
 
     .loadingSpinner {
         border: 0.2rem solid #f3f3f3;
@@ -493,6 +514,10 @@
             margin-inline-start: 0;
         }
 
+        #unitsButtonContainer {
+            display: none;
+        }
+
         #list {
             flex: 100%;
         }
@@ -500,7 +525,24 @@
         #gutter {
             flex: 0%;
         }
+
+        #mobileControls {
+            flex: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        #mobileUnitsButtonContainer {
+            white-space: nowrap;
+        }
         
+        #graphToggleButton {
+            flex: 100%;
+            display: block;
+        }
+
         #graph {
             flex: 100%;
         }
@@ -510,7 +552,7 @@
             flex-wrap: wrap;
         }
     }
-  </style>
+    </style>
 </head>
 <body onload="loadData(listId)">
 	<div id="contentContainer">
@@ -526,7 +568,7 @@
 					<h1 id="listName"></h1>
 					<span id="listSummary"></span>
 				</div>
-				<span id="unitsButtonContainer" style="visibility: hidden;">units: <a id="unitsButton" onClick="toggleUnits()">metric</a></span>
+				<span id="unitsButtonContainer">units: <a id="unitsButton" onclick="toggleUnits()">metric</a></span>
 			</div>
 			<div id="twoColumnContainer">
 				<div id="list">
@@ -537,8 +579,11 @@
 					</table>
 				</div>
                 <div id="gutter"></div>
-				<div id="graph">
-				</div>
+				<div id="graph"></div>
+                <div id="mobileControls">
+                    <a onclick="toggleGraph();" id="graphToggleButton">Hide Graph</a>
+                    <span id="mobileUnitsButtonContainer">units: <a id="mobileUnitsButton" onclick="toggleUnits();">metric</a></span>
+                </div>
 			</div>
 		</div>
 	</div>
