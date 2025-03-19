@@ -1,0 +1,163 @@
+/* begin packinglist.css */
+
+body {
+    overflow-y: scroll;
+}
+
+#listHeader {
+    width: 100%;
+    margin: 30px 0 40px 0;
+    display: flex;
+    justify-content: space-between;
+    visibility: hidden;
+}
+
+h1#listName {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.8rem;
+}
+
+#listSummary {
+    opacity: 0.74;
+}
+
+#mobileControls {
+    display: none;
+}
+
+#unitsButtonContainer {
+    font-size: 0.9em;
+}
+
+.listContainer {
+    background-color: #FEFEFE;
+    padding: 1rem 2rem 3rem 2rem;
+    margin: 2rem 0;
+    border-radius: 0.5rem;
+}
+
+#listItemTable {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#listItemtable td {
+    padding: 0;
+}
+
+#twoColumnContainer {
+    display: flex;
+    width: 100%
+}
+
+#graphToggleButton {
+    display: none;
+}
+
+#graph {
+    flex: 30%;
+}
+
+#graph .categorySummary {
+    font-size: 0.9rem;
+}
+
+.categoryCell {
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.weightCell {
+    text-align: right;
+    white-space: nowrap;
+    padding-left: 1rem;
+}
+
+#listContainer {
+    flex: 60%;
+}
+
+#gutter {
+    flex: 10%;
+}    
+
+.loadingSpinner {
+    border: 0.2rem solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 0.2rem solid #449C1A;
+    width: 1rem;
+    height: 1rem;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    float: left;
+    margin-right: 1rem;
+    margin-top: 0.2rem;
+}
+
+/* Spinner */
+@-webkit-keyframes spin { /* Safari */
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loadingText {
+    color: rgba(0, 0, 0, 0.84);
+}
+
+/* phone */
+@media only screen and (max-width: 480px) {
+    h2#packlightHeader {
+        margin-inline-start: 0;
+    }
+
+    #listHeader {
+        margin-bottom:20px;
+    }
+
+    #unitsButtonContainer {
+        display: none;
+    }
+
+    #list {
+        flex: 100%;
+    }
+
+    #gutter {
+        flex: 0%;
+    }
+
+    #mobileControls {
+        flex: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        visibility: hidden;
+    }
+
+    #mobileUnitsButtonContainer {
+        white-space: nowrap;
+    }
+    
+    #graphToggleButton {
+        flex: 100%;
+        display: block;
+    }
+
+    #graph {
+        flex: 100%;
+    }
+
+    #twoColumnContainer {
+        flex-direction: column-reverse;
+        flex-wrap: wrap;
+    }
+}
+/* end packinglist.css */

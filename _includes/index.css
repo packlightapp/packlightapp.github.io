@@ -1,0 +1,50 @@
+/* begin index.css */
+body {
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.logo {
+    width: 200px;
+    margin-bottom: 20px;
+}
+
+.description {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.download-button img {
+    width: 200px;
+}
+
+.heroContainer {
+    display: flex;
+    margin-top: 10rem;
+}
+
+.heroContainer .info {
+    margin: 0;
+    padding: 0 20px;
+    flex: 5;
+    text-align: left;
+}
+
+.heroContainer #gutter {
+    flex: 1;
+}
+
+.heroContainer #logo {
+    flex: 4;
+}
+
+.download-button {
+    display: block;
+    margin-top: 20px;
+}
+/* end index.css */

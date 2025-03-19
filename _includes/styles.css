@@ -1,0 +1,76 @@
+{% include reset.css %}
+
+/* begin styles.css */
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background-color: rgb(68, 156, 26, 0.05);
+    color: rgba(0, 0, 0, 0.94);
+}
+
+a:not([class]) {
+    color: blue;
+    cursor: pointer;
+}
+
+.logoHeader {
+    margin: 0 20px;
+    display: flex;
+}
+
+#headerLogoImage {
+    height: 40px;
+    aspect-ratio: 10 / 7;
+}
+
+h2#packlightHeader {
+    color: #449C1A;
+    margin: 0;
+    margin-inline-start: 1rem;
+}
+
+.appStoreButton {
+    cursor: pointer;
+    height: 40px;
+}
+
+#contentContainer {
+    margin: 0 auto;
+    max-width: 960px;
+    padding: 1rem 2rem;
+}
+
+.footerSection {
+    padding-top: 5rem;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+/* tablet */
+@media only screen and (max-width: 800px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+/* phone */
+@media only screen and (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    
+    #headerLogoImage {
+        height: 28px;
+    }
+
+    .appStoreButton {
+        height: 30px;
+    }
+}
+
+/* end styles.css */
