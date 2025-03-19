@@ -99,10 +99,10 @@ async function fetchValueFromCloudKit(key) {
         containers: [{
             containerIdentifier: 'iCloud.com.moapps.PackLight',
             apiTokenAuth: {
-                apiToken: '61ae09ee1a16555deadea5bb183e5803e6d015c4964e870a92fbefd96b6d6a42', //cf_token
+                apiToken: '{{ site.ck_api_token }}',
                 persist: true 
             },
-            environment: 'development' //cf_token
+            environment: '{{ site.ck_env}}'
         }]
     });
 

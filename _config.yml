@@ -40,7 +40,6 @@ defaults:
     path: "" # an empty string here means all files in the project
   values:
     layout: "default"
-    api_token: "blablabla"
 
 exclude:
   - .sass-cache/
