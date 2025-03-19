@@ -176,10 +176,14 @@ function drawTable(packingList, isImperial) {
         let items = category.items;
         tableHtml += `<tr style="font-weight: bold;"><td><p class="categoryCell">${category.name}</p><td><p class="categoryCell weightCell">${isImperial ? formatOz(category.weightOunces) : formatGrams(category.weightGrams)}</p></td></tr>`;
         tableHtml += items.reduce(
+            
             (accumulator, currentValue) => {
-                var currentName = currentValue.name;
-                if(currentValue.quantity > 1) {
-                    currentName += " x " + currentValue.quantity;
+                let currentName = "Unnamed Item";
+                if(currentValue.name && currentValue.name.trim() != "") {
+                    currentName = currentValue.name;
+                    if(currentValue.quantity > 1) {
+                        currentName += " x " + currentValue.quantity;
+                    }
                 }
                 return accumulator + `<tr><td>${currentName}</td><td class="weightCell">${isImperial ? formatOz(currentValue.weightOunces) : formatGrams(currentValue.weightGrams)}</td></tr>`;
             }
