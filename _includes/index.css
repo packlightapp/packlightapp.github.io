@@ -1,46 +1,147 @@
 /* begin index.css */
-.container {
-    max-width: 600px;
-    margin: 0 auto;
+
+#contentContainer {
+    padding: 0;
 }
 
-.logo {
-    width: 200px;
-    margin-bottom: 20px;
+.heroContainer {
+    display: flex;
+    background-image: url('/img/hero-background.webp');
+    background-size: cover;
+    min-height: 600px;
 }
 
-.description {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 30px;
+.heroContainer .info {
+    margin: 30px 40px;
+    padding: 0 20px;
+    flex: 6;
+    text-align: left;
+}
+
+.heroContainer .logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.heroContainer .logoContainer img.logo{
+    width: 54px;
+}
+
+.heroContainer .logoContainer p.brandName {
+    margin: 0;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #449C1A;
+}
+
+.heroContainer .heroHeadline {
+    margin: 40px 0;
+    font-size: 3.4rem;
+    line-height: 1.2em;
+}
+
+.download-button {
+    display: block;
+    margin-top: 20px;
 }
 
 .download-button img {
     width: 200px;
 }
 
-.heroContainer {
-    display: flex;
-    margin-top: 10rem;
-}
-
-.heroContainer .info {
-    margin: 0;
-    padding: 0 20px;
-    flex: 5;
-    text-align: left;
-}
-
-.heroContainer #gutter {
-    flex: 1;
-}
-
-.heroContainer #logo {
+.heroContainer .heroImage {
     flex: 4;
+    display: flex;
+    align-items: center;
+    justify-content: left;
 }
 
-.download-button {
-    display: block;
-    margin-top: 20px;
+.heroContainer .heroImage img {
+    max-height: 80%;
+    max-width: 85%;
+}
+
+
+
+@media only screen and (max-width: 890px) {
+    .heroContainer .heroHeadline {
+        font-size: 3.1rem;
+    }
+
+    /* .heroContainer .heroImage {
+        flex: 3;    
+    } */
+}
+
+/* tablet */
+@media only screen and (max-width: 820px) {
+    .heroContainer .heroHeadline {
+        font-size: 2.8rem;
+    }
+}
+
+@media only screen and (max-width: 715px) {
+
+    .heroContainer .heroHeadline {
+        font-size: 2.5rem;
+    }
+
+    .download-button img {
+        width: 180px;
+    }
+}
+
+/* phone */
+@media only screen and (max-width: 650px) {
+    .mobileHidden {
+        display: none !important;
+    }
+
+    .mobileVisible {
+        display: initial !important;
+    }
+
+    .heroContainer {
+        flex-direction: column;
+        min-height: 700px;
+        background-image: url('/img/hero-background-mobile.webp');
+        background-position: bottom;
+    }
+
+    .heroContainer .info {
+        margin: 30px auto;
+        flex: 1;
+    }
+
+    .heroContainer .heroHeadline {
+        text-align: center;
+        font-size: 3rem;
+        margin-top: 20px;
+    }
+
+    .download-button img{
+        margin: 0 auto 20px auto;
+        padding-bottom: 0;
+        width: 44%;
+    }
+
+    .heroContainer .heroImage {
+        align-items: start;
+        justify-content: center;
+        margin-bottom: 40px;
+    }
+
+    .heroContainer .heroImage img {
+        max-width: 50%;
+        /* margin: 0 auto; */
+    }
+    /* .heroContainer .info {
+        flex: 1;
+    }
+
+    .heroContainer .heroImage {
+        flex: 1;
+    } */
 }
 /* end index.css */
