@@ -18,24 +18,24 @@
     text-align: left;
 }
 
-.heroContainer .logoContainer {
+.logoContainer {
     display: flex;
     align-items: center;
     gap: 0.5em;
 }
 
-.heroContainer .logoContainer img.logo{
+.logoContainer img.logo{
     width: 54px;
 }
 
-.heroContainer .logoContainer p.brandName {
+.logoContainer p.brandName {
     margin: 0;
     font-size: 1.3em;
     font-weight: bold;
     color: #449C1A;
 }
 
-.heroContainer .heroHeadline {
+.heroHeadline {
     margin: 40px 0;
     font-size: 3.4rem;
     line-height: 1.2em;
@@ -55,6 +55,10 @@
     display: flex;
     align-items: center;
     justify-content: left;
+}
+
+.heroContainer .info .heroImage.mobile {
+    display: none;
 }
 
 .heroContainer .heroImage img {
@@ -94,16 +98,30 @@
 
 /* phone */
 @media only screen and (max-width: 650px) {
-    .mobileHidden {
-        display: none !important;
+    
+    .heroContainer .info {
+        margin-top: 16px;
     }
 
-    .mobileVisible {
-        display: initial !important;
+    .logoContainer {
+        justify-content: center;
+    }
+
+    /* .heroContainer .info {
+        text-align: center;
+    } */
+
+    .logoContainer img.logo {
+        width: 26px;
+    }
+
+    .logoContainer p.brandName {
+        font-size: 1em;
     }
 
     .heroContainer {
         flex-direction: column;
+        justify-content: center;
         min-height: 700px;
         background-image: url('/img/hero-background-mobile.webp');
         background-position: bottom;
@@ -127,21 +145,18 @@
     }
 
     .heroContainer .heroImage {
-        align-items: start;
-        justify-content: center;
+        flex: 0;
         margin-bottom: 40px;
+        display: none;
+        justify-content: center;;
     }
 
     .heroContainer .heroImage img {
         max-width: 50%;
-        /* margin: 0 auto; */
-    }
-    /* .heroContainer .info {
-        flex: 1;
     }
 
-    .heroContainer .heroImage {
-        flex: 1;
-    } */
+    .heroContainer .info .heroImage.mobile {
+        display: flex;
+    }
 }
 /* end index.css */
