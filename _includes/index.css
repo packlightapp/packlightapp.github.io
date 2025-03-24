@@ -147,11 +147,11 @@
     } */
 
     .logoContainer img.logo {
-        width: 26px;
+        width: 32px;
     }
 
     .logoContainer p.brandName {
-        font-size: 1em;
+        font-size: 1.3em;
     }
 
     .heroContainer {
