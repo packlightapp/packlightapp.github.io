@@ -66,7 +66,42 @@
     max-width: 85%;
 }
 
+.featureContainer {
+    margin: 60px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+}
 
+.featureContainer h2 {
+    margin: 0;
+    /* margin: 30px 0; */
+    font-size: min(6vw, 3rem);
+    color: #449C1A;
+}
+
+.featureList {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 3em;
+}
+
+.featureItem {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.featureDescription h3 {
+    margin: 0;
+}
+
+.featureDescription p {
+    margin-top: 8px;
+}
 
 @media only screen and (max-width: 890px) {
     .heroContainer .heroHeadline {
@@ -134,7 +169,7 @@
 
     .heroContainer .heroHeadline {
         text-align: center;
-        font-size: 2.8rem;
+        font-size: 2.8rem; /* 10vw */
         margin-top: 20px;
     }
 
