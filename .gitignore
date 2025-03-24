@@ -4,6 +4,8 @@ _site/
 .sass-cache/
 .jekyll-cache/
 
+packlightapp.code-workspace
+
 *.log
 *.tmp
 .DS_Store

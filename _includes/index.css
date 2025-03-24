@@ -1,46 +1,192 @@
 /* begin index.css */
-.container {
-    max-width: 600px;
-    margin: 0 auto;
+
+#contentContainer {
+    padding: 0;
 }
 
-.logo {
-    width: 200px;
-    margin-bottom: 20px;
+.heroContainer {
+    display: flex;
+    background-image: url('/img/hero-background.svg');
+    background-size: cover;
+    min-height: 600px;
 }
 
-.description {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 30px;
+.heroContainer .info {
+    margin: 30px 40px;
+    padding: 0 20px;
+    flex: 6;
+    text-align: left;
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.logoContainer img.logo{
+    width: 54px;
+}
+
+.logoContainer p.brandName {
+    margin: 0;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #449C1A;
+}
+
+.heroHeadline {
+    margin: 40px 0;
+    font-size: 3.4rem;
+    line-height: 1.2em;
+}
+
+.download-button {
+    display: block;
+    margin-top: 20px;
 }
 
 .download-button img {
     width: 200px;
 }
 
-.heroContainer {
-    display: flex;
-    margin-top: 10rem;
-}
-
-.heroContainer .info {
-    margin: 0;
-    padding: 0 20px;
-    flex: 5;
-    text-align: left;
-}
-
-.heroContainer #gutter {
-    flex: 1;
-}
-
-.heroContainer #logo {
+.heroContainer .heroImage {
     flex: 4;
+    display: flex;
+    align-items: center;
+    justify-content: left;
 }
 
-.download-button {
-    display: block;
-    margin-top: 20px;
+.heroContainer .info .heroImage.mobile {
+    display: none;
+}
+
+.heroContainer .heroImage img {
+    max-height: 80%;
+    max-width: 85%;
+}
+
+.featureContainer {
+    margin: 60px 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+.featureContainer h2 {
+    margin: 0;
+    /* margin: 30px 0; */
+    font-size: min(7vw, 3rem);
+    color: #449C1A;
+}
+
+.featureList {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 3em;
+}
+
+.featureItem {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+}
+
+.featureDescription h3 {
+    margin: 0;
+}
+
+.featureDescription p {
+    margin-top: 8px;
+}
+
+@media only screen and (max-width: 890px) {
+    .heroContainer .heroHeadline {
+        font-size: 3.1rem;
+    }
+
+    /* .heroContainer .heroImage {
+        flex: 3;    
+    } */
+}
+
+/* tablet */
+@media only screen and (max-width: 820px) {
+    .heroContainer .heroHeadline {
+        font-size: 2.8rem;
+    }
+}
+
+@media only screen and (max-width: 715px) {
+
+    .heroContainer .heroHeadline {
+        font-size: 2.5rem;
+    }
+
+    .download-button img {
+        width: 180px;
+    }
+}
+
+/* phone */
+@media only screen and (max-width: 650px) {
+    
+    .heroContainer .info {
+        margin-top: 16px;
+    }
+
+    .logoContainer {
+        justify-content: center;
+    }
+
+    .logoContainer img.logo {
+        width: 32px;
+    }
+
+    .logoContainer p.brandName {
+        font-size: 1.3em;
+    }
+
+    .heroContainer {
+        flex-direction: column;
+        justify-content: center;
+        min-height: 700px;
+        background-image: url('/img/hero-background-mobile.svg');
+        background-position: bottom;
+    }
+
+    .heroContainer .info {
+        margin: 30px auto;
+        flex: 1;
+    }
+
+    .heroContainer .heroHeadline {
+        text-align: center;
+        font-size: 2.8rem; /* 10vw */
+        margin-top: 20px;
+    }
+
+    .download-button img{
+        margin: 0 auto 20px auto;
+        padding-bottom: 0;
+    }
+
+    .heroContainer .heroImage {
+        flex: 0;
+        margin-bottom: 40px;
+        display: none;
+        justify-content: center;;
+    }
+
+    .heroContainer .heroImage img {
+        max-width: 50%;
+    }
+
+    .heroContainer .info .heroImage.mobile {
+        display: flex;
+    }
 }
 /* end index.css */

@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="PackLight {{page.title}}">
-  <!-- <meta http-equiv="Cache-control" content="max-age=2592000"> -->
+  <meta property="og:title" content="PackLight {{page.title}}" />
 
   <title>PackLight: {{page.title}}</title>
 
-  <link rel="shortcut icon" type="image/jpg" href="/img/favicon.png"/>
+  <link rel="icon" type="image/png" href="/img/favicon.png">
   <style>
     {% include styles.css %}
     {% if page.page_css %}
@@ -30,7 +30,7 @@
 <div id="contentContainer">
     <div class="logoHeader" style="justify-content: space-between; align-items: center;{% if page.hidesHeader %}display: none;{% endif %}" >
         <div id="logoAndName" style="display: flex; align-items: center;">
-            <a href="/"><img src="logo.svg" alt="logo" id="headerLogoImage"/></a>&nbsp;<h2 id="packlightHeader">PackLight</h2>
+            <a href="/"><img src="img/logo.svg" alt="logo" id="headerLogoImage"/></a>&nbsp;<h2 id="packlightHeader">PackLight</h2>
         </div>			
         <img class="appStoreButton" alt="download" src="app_store_badge.svg" onclick="window.open('https://apps.apple.com/app/apple-store/id1054845207?pt=106642831&ct={% if page.appStoreCampaignId %}{{page.appStoreCampaignId}}{% else %}web{% endif %}&mt=8', '_blank');"></img>
     </div>
