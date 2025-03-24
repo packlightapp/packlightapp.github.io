@@ -6,7 +6,7 @@
 
 .heroContainer {
     display: flex;
-    background-image: url('/img/hero-background.webp');
+    background-image: url('/img/hero-background.svg');
     background-size: cover;
     min-height: 600px;
 }
@@ -67,7 +67,7 @@
 }
 
 .featureContainer {
-    margin: 60px 0;
+    margin: 60px 2em;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -92,7 +92,7 @@
 .featureItem {
     display: flex;
     flex-direction: row;
-    gap: 12px;
+    gap: 2em;
 }
 
 .featureDescription h3 {
@@ -142,10 +142,6 @@
         justify-content: center;
     }
 
-    /* .heroContainer .info {
-        text-align: center;
-    } */
-
     .logoContainer img.logo {
         width: 32px;
     }
@@ -158,7 +154,7 @@
         flex-direction: column;
         justify-content: center;
         min-height: 700px;
-        background-image: url('/img/hero-background-mobile.webp');
+        background-image: url('/img/hero-background-mobile.svg');
         background-position: bottom;
     }
 
@@ -176,7 +172,6 @@
     .download-button img{
         margin: 0 auto 20px auto;
         padding-bottom: 0;
-        width: 44%;
     }
 
     .heroContainer .heroImage {
